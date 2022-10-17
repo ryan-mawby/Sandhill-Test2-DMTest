@@ -1,0 +1,1671 @@
+
+CREATE TABLE [CUST]
+( 
+	[CUST address]       varchar(20)  NULL ,
+	[CUST city]          varchar(20)  NULL ,
+	[CUST first name]    varchar(20)  NULL ,
+	[CUST last name]     varchar(20)  NULL ,
+	[CUST state]         varchar(20)  NULL ,
+	[CUST zip code]      integer  NULL ,
+	[email]              varchar  NULL ,
+	[CUST number]        integer  NOT NULL 
+)
+go
+
+CREATE TABLE [CUST CREDIT]
+( 
+	[credit card]        integer  NULL ,
+	[credit card exp]    integer  NULL ,
+	[status code]        varchar(20)  NULL ,
+	[CUST number]        integer  NOT NULL 
+)
+go
+
+CREATE TABLE [EMP]
+( 
+	[EMP first name]     varchar(20)  NULL ,
+	[EMP address]        varchar(20)  NULL ,
+	[EMP phone]          integer  NULL 
+	CONSTRAINT [Uk Mobile Limits_1838929487]
+		CHECK  ( EMP phone BETWEEN 7000000000 AND 7999999999 ),
+	[EMP address 2]      varchar(20)  NULL ,
+	[email]              varchar(20)  NULL ,
+	[salary]             integer  NULL ,
+	[hire date]          datetime  NULL ,
+	[soc sec number]     integer  NULL ,
+	[EMP number]         varchar(20)  NOT NULL ,
+	[supervisor]         varchar(20)  NOT NULL 
+)
+go
+
+CREATE TABLE [MO RENT REC]
+( 
+	[rental date]        datetime  NULL ,
+	[due date]           datetime  NULL ,
+	[rental status]      varchar(20)  NULL ,
+	[payment transaction number] integer  NULL ,
+	[overdue charge]     integer  NULL ,
+	[rental rate]        integer  NULL ,
+	[EMP phone]          integer  NOT NULL 
+	CONSTRAINT [Uk Mobile Limits_838439204]
+		CHECK  ( EMP phone BETWEEN 7000000000 AND 7999999999 ),
+	[soc sec number]     integer  NOT NULL ,
+	[rental record date] datetime  NOT NULL ,
+	[CUST number]        integer  NOT NULL 
+)
+go
+
+CREATE TABLE [MOVIE]
+( 
+	[movie title]        varchar(20)  NULL ,
+	[movie director]     varchar(20)  NULL ,
+	[description]        varchar(20)  NULL ,
+	[star 1 name]        varchar(20)  NULL ,
+	[rating]             varchar  NULL ,
+	[star 2 name]        varchar(20)  NULL ,
+	[movie number]       integer  NOT NULL ,
+	[genre]              char  NULL 
+	CONSTRAINT [Movie_genre_354617017]
+		CHECK  ( [genre]='AA' OR [genre]='AN' OR [genre]='CO' OR [genre]='DO' OR [genre]='DR' OR [genre]='FA' OR [genre]='CL' OR [genre]='HO' OR [genre]='MY' OR [genre]='SF' OR [genre]='WS' ),
+	[rental rate]        numeric  NULL ,
+	[movie url]          varchar  NULL ,
+	[movie clip]         binary(255)  NULL 
+)
+go
+
+CREATE TABLE [MOVIE_STORE]
+( 
+	[movie number]       integer  NOT NULL 
+)
+go
+
+CREATE TABLE [PAYMENT]
+( 
+	[payment transaction number] integer  NOT NULL ,
+	[payment type]       char(18)  NULL ,
+	[payment amount]     numeric  NULL ,
+	[payment date]       datetime  NULL ,
+	[payment status]     varchar(1)  NULL ,
+	[EMP number]         varchar(20)  NOT NULL ,
+	[CUST number]        integer  NULL ,
+	[customer no]        integer  NULL ,
+	[check bank number]  integer  NULL ,
+	[check number]       integer  NULL ,
+	[epay vendor number] integer  NULL ,
+	[epay account number] integer  NULL ,
+	[credit card number] char(18)  NULL ,
+	[credit card exp]    datetime  NULL ,
+	[credit card type]   char(18)  NULL 
+)
+go
+
+CREATE TABLE [Table1]
+( 
+	[Table1Pk]           varbinary  NOT NULL ,
+	[Table1Col1]         char(18)  NULL 
+)
+go
+
+CREATE TABLE [Table2]
+( 
+	[Table1Pk]           varbinary  NULL ,
+	[Table2PK]           char(18)  NOT NULL 
+)
+go
+
+CREATE TABLE [Test Table]
+( 
+	[Test_column inherited] datetime  NULL ,
+	[Test_Column override] datetime  NULL 
+)
+go
+
+ALTER TABLE [CUST]
+	ADD CONSTRAINT [XPKCUSTOMER] PRIMARY KEY  NONCLUSTERED ([CUST number])
+go
+
+ALTER TABLE [CUST]
+	ADD CONSTRAINT [XAK1CUSTOMER] UNIQUE ([CUST address])
+go
+
+CREATE INDEX [XIE1CUSTOMER] ON [CUST]
+( 
+	[CUST last name]    
+)
+go
+
+ALTER TABLE [CUST CREDIT]
+	ADD CONSTRAINT [XPKCUSTOMER CREDIT] PRIMARY KEY  NONCLUSTERED ([CUST number])
+go
+
+ALTER TABLE [EMP]
+	ADD CONSTRAINT [XPKEMPLOYEE] PRIMARY KEY  CLUSTERED ([EMP number])
+go
+
+ALTER TABLE [EMP]
+	ADD CONSTRAINT [XAK1EMPLOYEE] UNIQUE ([soc sec number],[EMP phone])
+go
+
+CREATE INDEX [XIE1EMPLOYEE] ON [EMP]
+( 
+	[EMP first name]    
+)
+go
+
+ALTER TABLE [MO RENT REC]
+	ADD CONSTRAINT [XPKMOVIE RENTAL RECORD] PRIMARY KEY  CLUSTERED ([rental record date],[soc sec number],[EMP phone],[CUST number])
+go
+
+ALTER TABLE [MOVIE]
+	ADD CONSTRAINT [XPKMOVIE] PRIMARY KEY  NONCLUSTERED ([movie number])
+go
+
+ALTER TABLE [MOVIE]
+	ADD CONSTRAINT [XAK1MOVIE] UNIQUE ([movie title])
+go
+
+ALTER TABLE [MOVIE_STORE]
+	ADD CONSTRAINT [XPKMOVIE_STORE] PRIMARY KEY  CLUSTERED ([movie number])
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [XPKPAYMENT] PRIMARY KEY  NONCLUSTERED ([payment transaction number])
+go
+
+ALTER TABLE [Table1]
+	ADD CONSTRAINT [XPKTable1] PRIMARY KEY  NONCLUSTERED ([Table1Pk] ASC)
+go
+
+ALTER TABLE [Table2]
+	ADD CONSTRAINT [XPKTable2] PRIMARY KEY  NONCLUSTERED ([Table2PK] ASC)
+go
+
+CREATE VIEW [CUSTOMER_INVOICE]([credit card],[credit card exp],[status code],[CUST number],[CUST address],[email],[CUST city],[CUST first name],[CUST last name],[CUST state],[CUST zip code],[rental record date],[rental date],[due date],[rental status],[overdue charge],[rental rate],[movie title],[Overdue_Charge_Rate])
+AS
+SELECT ALL [CUST CREDIT].[credit card],[CUST CREDIT].[credit card exp],[CUST CREDIT].[status code],[CUST].[CUST number],[CUST].[CUST address],[CUST].[email],[CUST].[CUST city],[CUST].[CUST first name],[CUST].[CUST last name],[CUST].[CUST state],[CUST].[CUST zip code],[MO RENT REC].[rental record date],[MO RENT REC].[rental date],[MO RENT REC].[due date],[MO RENT REC].[rental status],[MO RENT REC].[overdue charge],[MO RENT REC].[rental rate],[MOVIE].[movie title],rental_rate * 1.5
+	FROM [CUST CREDIT],[CUST],[MO RENT REC],[MOVIE]
+go
+
+CREATE VIEW [OVERDUE_NOTICE]([credit card],[credit card exp],[status code],[Overdue_Charge_Rate],[CUST number],[CUST address],[email],[CUST city],[CUST first name],[CUST last name],[CUST state],[CUST zip code],[rental record date],[rental date],[due date],[rental status],[overdue charge],[rental rate])
+AS
+SELECT ALL [CUST CREDIT].[credit card],[CUST CREDIT].[credit card exp],[CUST CREDIT].[status code],rental_rate * 1.5,[CUST].[CUST number],[CUST].[CUST address],[CUST].[email],[CUST].[CUST city],[CUST].[CUST first name],[CUST].[CUST last name],[CUST].[CUST state],[CUST].[CUST zip code],[MO RENT REC].[rental record date],[MO RENT REC].[rental date],[MO RENT REC].[due date],[MO RENT REC].[rental status],[MO RENT REC].[overdue charge],[MO RENT REC].[rental rate]
+	FROM [CUST CREDIT],[CUST],[MO RENT REC]
+go
+
+
+ALTER TABLE [EMP]
+	ADD CONSTRAINT [reports_to] FOREIGN KEY ([supervisor]) REFERENCES [EMP]([EMP number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [MO RENT REC]
+	ADD CONSTRAINT [completes] FOREIGN KEY ([soc sec number],[EMP phone]) REFERENCES [EMP]([soc sec number],[EMP phone])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [MO RENT REC]
+	ADD CONSTRAINT [R_8_1] FOREIGN KEY ([CUST number]) REFERENCES [CUST]([CUST number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [MO RENT REC]
+	ADD CONSTRAINT [R_8_2] FOREIGN KEY ([CUST number]) REFERENCES [CUST CREDIT]([CUST number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [MO RENT REC]
+	ADD CONSTRAINT [is_made_on] FOREIGN KEY ([payment transaction number]) REFERENCES [PAYMENT]([payment transaction number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [MOVIE_STORE]
+	ADD CONSTRAINT [rents] FOREIGN KEY ([movie number]) REFERENCES [MOVIE]([movie number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [receives] FOREIGN KEY ([EMP number]) REFERENCES [EMP]([EMP number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [R_7_1] FOREIGN KEY ([customer no]) REFERENCES [CUST]([CUST number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [PAYMENT]
+	ADD CONSTRAINT [R_7_2] FOREIGN KEY ([CUST number]) REFERENCES [CUST CREDIT]([CUST number])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [Table2]
+	ADD CONSTRAINT [R_1] FOREIGN KEY ([Table1Pk]) REFERENCES [Table1]([Table1Pk])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+CREATE TRIGGER [tD_Table1] ON Table1
+    AFTER DELETE 
+  
+  AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on Table1 */
+/* default body for [tD_Table1] */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insTable1Pk varbinary,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+
+/* erwin Builtin Trigger */
+    /* Table1  Table2 on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="Table1"
+    CHILD_OWNER="", CHILD_TABLE="Table2"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="R_1", FK_COLUMNS="Table1Pk" */
+    IF EXISTS (
+      SELECT * FROM deleted,Table2
+      WHERE
+        /*  Table2.Table1Pk = deleted.Table1Pk */
+        Table2.Table1Pk = deleted.Table1Pk
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete Table1 because Table2 exists.'
+      GOTO error
+    END
+
+
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+CREATE TRIGGER [tU_Table12] ON Table1
+    AFTER UPDATE 
+  
+  AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on Table1 */
+/* default body for [tU_Table12] */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insTable1Pk varbinary,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+
+/* erwin Builtin Trigger */
+  /* Table1  Table2 on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="Table1"
+    CHILD_OWNER="", CHILD_TABLE="Table2"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="R_1", FK_COLUMNS="Table1Pk" */
+  IF
+    /* UPDATE(Table1Pk) */
+    UPDATE(Table1Pk)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,Table2
+      WHERE
+        /*  Table2.Table1Pk = deleted.Table1Pk */
+        Table2.Table1Pk = deleted.Table1Pk
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update Table1 because Table2 exists.'
+      GOTO error
+    END
+  END
+
+
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+CREATE TRIGGER [tI_Table13] ON Table1
+    AFTER INSERT 
+  
+  AS
+/* erwin Builtin Trigger */
+/* INSERT trigger on Table1 */
+/* default body for [tI_Table13] */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insTable1Pk varbinary,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+
+
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+CREATE TRIGGER tD_Table2 ON Table2 FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on Table2 */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* Table1  Table2 on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00013df3", PARENT_OWNER="", PARENT_TABLE="Table1"
+    CHILD_OWNER="", CHILD_TABLE="Table2"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="R_1", FK_COLUMNS="Table1Pk" */
+    IF EXISTS (SELECT * FROM deleted,Table1
+      WHERE
+        /* %JoinFKPK(deleted,Table1," = "," AND") */
+        deleted.Table1Pk = Table1.Table1Pk AND
+        NOT EXISTS (
+          SELECT * FROM Table2
+          WHERE
+            /* %JoinFKPK(Table2,Table1," = "," AND") */
+            Table2.Table1Pk = Table1.Table1Pk
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last Table2 because Table1 exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tU_Table22 ON Table2 FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on Table2 */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insTable2PK char(18),
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* Table1  Table2 on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00017a46", PARENT_OWNER="", PARENT_TABLE="Table1"
+    CHILD_OWNER="", CHILD_TABLE="Table2"
+    P2C_VERB_PHRASE="", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="R_1", FK_COLUMNS="Table1Pk" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(Table1Pk)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,Table1
+        WHERE
+          /* %JoinFKPK(inserted,Table1) */
+          inserted.Table1Pk = Table1.Table1Pk
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.Table1Pk IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update Table2 because Table1 does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+
+CREATE TRIGGER tD_CUST ON CUST FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on CUST */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* CUST makes PAYMENT on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00020486", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_1", FK_COLUMNS="customer no" */
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.customer no = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete CUST because PAYMENT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST rents under MO RENT REC on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_1", 
+    FK_CONSTRAINT="R_8_1", FK_COLUMNS="CUST number" */
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete CUST because MO RENT REC exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_CUST ON CUST FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on CUST */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insCUST number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* CUST makes PAYMENT on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00023bc3", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_1", FK_COLUMNS="customer no" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.customer no = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update CUST because PAYMENT exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST rents under MO RENT REC on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_1", 
+    FK_CONSTRAINT="R_8_1", FK_COLUMNS="CUST number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update CUST because MO RENT REC exists.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_CUST CREDIT ON CUST CREDIT FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on CUST CREDIT */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* CUST CREDIT makes PAYMENT on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="000208a6", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_2", FK_COLUMNS="CUST number" */
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete CUST CREDIT because PAYMENT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST CREDIT rents under MO RENT REC on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_2", 
+    FK_CONSTRAINT="R_8_2", FK_COLUMNS="CUST number" */
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete CUST CREDIT because MO RENT REC exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_CUST CREDIT ON CUST CREDIT FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on CUST CREDIT */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insCUST number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* CUST CREDIT makes PAYMENT on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00025315", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_2", FK_COLUMNS="CUST number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update CUST CREDIT because PAYMENT exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST CREDIT rents under MO RENT REC on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_2", 
+    FK_CONSTRAINT="R_8_2", FK_COLUMNS="CUST number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.CUST number = deleted.CUST number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update CUST CREDIT because MO RENT REC exists.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_EMP ON EMP FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on EMP */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* EMP receives PAYMENT on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00041a02", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="receives", C2P_VERB_PHRASE="is received by", 
+    FK_CONSTRAINT="receives", FK_COLUMNS="EMP number" */
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.EMP number = deleted.EMP number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete EMP because PAYMENT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* EMP reports to EMP on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="EMP"
+    P2C_VERB_PHRASE="reports to", C2P_VERB_PHRASE="supervises", 
+    FK_CONSTRAINT="reports_to", FK_COLUMNS="supervisor" */
+    IF EXISTS (
+      SELECT * FROM deleted,EMP
+      WHERE
+        /*  %JoinFKPK(EMP,deleted," = "," AND") */
+        EMP.supervisor = deleted.EMP number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete EMP because EMP exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* EMP completes MO RENT REC on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="completes", C2P_VERB_PHRASE="is completed by", 
+    FK_CONSTRAINT="completes", FK_COLUMNS="soc sec number""EMP phone" */
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.EMP phone = deleted.EMP phone AND
+        MO RENT REC.soc sec number = deleted.soc sec number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete EMP because MO RENT REC exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* EMP reports to EMP on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="EMP"
+    P2C_VERB_PHRASE="reports to", C2P_VERB_PHRASE="supervises", 
+    FK_CONSTRAINT="reports_to", FK_COLUMNS="supervisor" */
+    IF EXISTS (SELECT * FROM deleted,EMP
+      WHERE
+        /* %JoinFKPK(deleted,EMP," = "," AND") */
+        deleted.supervisor = EMP.EMP number AND
+        NOT EXISTS (
+          SELECT * FROM EMP
+          WHERE
+            /* %JoinFKPK(EMP,EMP," = "," AND") */
+            EMP.supervisor = EMP.EMP number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last EMP because EMP exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_EMP ON EMP FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on EMP */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insEMP number varchar(20),
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* EMP receives PAYMENT on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="0004ca86", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="receives", C2P_VERB_PHRASE="is received by", 
+    FK_CONSTRAINT="receives", FK_COLUMNS="EMP number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(EMP number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,PAYMENT
+      WHERE
+        /*  %JoinFKPK(PAYMENT,deleted," = "," AND") */
+        PAYMENT.EMP number = deleted.EMP number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update EMP because PAYMENT exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* EMP reports to EMP on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="EMP"
+    P2C_VERB_PHRASE="reports to", C2P_VERB_PHRASE="supervises", 
+    FK_CONSTRAINT="reports_to", FK_COLUMNS="supervisor" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(EMP number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,EMP
+      WHERE
+        /*  %JoinFKPK(EMP,deleted," = "," AND") */
+        EMP.supervisor = deleted.EMP number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update EMP because EMP exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* EMP completes MO RENT REC on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="completes", C2P_VERB_PHRASE="is completed by", 
+    FK_CONSTRAINT="completes", FK_COLUMNS="soc sec number""EMP phone" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(EMP number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.EMP phone = deleted.EMP phone AND
+        MO RENT REC.soc sec number = deleted.soc sec number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update EMP because MO RENT REC exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* EMP reports to EMP on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="EMP"
+    P2C_VERB_PHRASE="reports to", C2P_VERB_PHRASE="supervises", 
+    FK_CONSTRAINT="reports_to", FK_COLUMNS="supervisor" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(supervisor)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,EMP
+        WHERE
+          /* %JoinFKPK(inserted,EMP) */
+          inserted.supervisor = EMP.EMP number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.supervisor IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update EMP because EMP does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_MO RENT REC ON MO RENT REC FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on MO RENT REC */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* PAYMENT is made on MO RENT REC on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00054653", PARENT_OWNER="", PARENT_TABLE="PAYMENT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="is made on", C2P_VERB_PHRASE="requires", 
+    FK_CONSTRAINT="is_made_on", FK_COLUMNS="payment transaction number" */
+    IF EXISTS (SELECT * FROM deleted,PAYMENT
+      WHERE
+        /* %JoinFKPK(deleted,PAYMENT," = "," AND") */
+        deleted.payment transaction number = PAYMENT.payment transaction number AND
+        NOT EXISTS (
+          SELECT * FROM MO RENT REC
+          WHERE
+            /* %JoinFKPK(MO RENT REC,PAYMENT," = "," AND") */
+            MO RENT REC.payment transaction number = PAYMENT.payment transaction number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last MO RENT REC because PAYMENT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST CREDIT rents under MO RENT REC on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_2", 
+    FK_CONSTRAINT="R_8_2", FK_COLUMNS="CUST number" */
+    IF EXISTS (SELECT * FROM deleted,CUST CREDIT
+      WHERE
+        /* %JoinFKPK(deleted,CUST CREDIT," = "," AND") */
+        deleted.CUST number = CUST CREDIT.CUST number AND
+        NOT EXISTS (
+          SELECT * FROM MO RENT REC
+          WHERE
+            /* %JoinFKPK(MO RENT REC,CUST CREDIT," = "," AND") */
+            MO RENT REC.CUST number = CUST CREDIT.CUST number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last MO RENT REC because CUST CREDIT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST rents under MO RENT REC on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_1", 
+    FK_CONSTRAINT="R_8_1", FK_COLUMNS="CUST number" */
+    IF EXISTS (SELECT * FROM deleted,CUST
+      WHERE
+        /* %JoinFKPK(deleted,CUST," = "," AND") */
+        deleted.CUST number = CUST.CUST number AND
+        NOT EXISTS (
+          SELECT * FROM MO RENT REC
+          WHERE
+            /* %JoinFKPK(MO RENT REC,CUST," = "," AND") */
+            MO RENT REC.CUST number = CUST.CUST number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last MO RENT REC because CUST exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* EMP completes MO RENT REC on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="completes", C2P_VERB_PHRASE="is completed by", 
+    FK_CONSTRAINT="completes", FK_COLUMNS="soc sec number""EMP phone" */
+    IF EXISTS (SELECT * FROM deleted,EMP
+      WHERE
+        /* %JoinFKPK(deleted,EMP," = "," AND") */
+        deleted.EMP phone = EMP.EMP phone AND
+        deleted.soc sec number = EMP.soc sec number AND
+        NOT EXISTS (
+          SELECT * FROM MO RENT REC
+          WHERE
+            /* %JoinFKPK(MO RENT REC,EMP," = "," AND") */
+            MO RENT REC.EMP phone = EMP.EMP phone AND
+            MO RENT REC.soc sec number = EMP.soc sec number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last MO RENT REC because EMP exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_MO RENT REC ON MO RENT REC FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on MO RENT REC */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insEMP phone integer, 
+           @inssoc sec number integer, 
+           @insrental record date datetime, 
+           @insCUST number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* PAYMENT is made on MO RENT REC on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="0005ad5d", PARENT_OWNER="", PARENT_TABLE="PAYMENT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="is made on", C2P_VERB_PHRASE="requires", 
+    FK_CONSTRAINT="is_made_on", FK_COLUMNS="payment transaction number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(payment transaction number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,PAYMENT
+        WHERE
+          /* %JoinFKPK(inserted,PAYMENT) */
+          inserted.payment transaction number = PAYMENT.payment transaction number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.payment transaction number IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update MO RENT REC because PAYMENT does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST CREDIT rents under MO RENT REC on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_2", 
+    FK_CONSTRAINT="R_8_2", FK_COLUMNS="CUST number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,CUST CREDIT
+        WHERE
+          /* %JoinFKPK(inserted,CUST CREDIT) */
+          inserted.CUST number = CUST CREDIT.CUST number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update MO RENT REC because CUST CREDIT does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST rents under MO RENT REC on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="rents under", C2P_VERB_PHRASE="identifies_1", 
+    FK_CONSTRAINT="R_8_1", FK_COLUMNS="CUST number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,CUST
+        WHERE
+          /* %JoinFKPK(inserted,CUST) */
+          inserted.CUST number = CUST.CUST number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update MO RENT REC because CUST does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* EMP completes MO RENT REC on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="completes", C2P_VERB_PHRASE="is completed by", 
+    FK_CONSTRAINT="completes", FK_COLUMNS="soc sec number""EMP phone" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(EMP phone) OR
+    UPDATE(soc sec number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,EMP
+        WHERE
+          /* %JoinFKPK(inserted,EMP) */
+          inserted.EMP phone = EMP.EMP phone and
+          inserted.soc sec number = EMP.soc sec number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update MO RENT REC because EMP does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_MOVIE ON MOVIE FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on MOVIE */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* MOVIE rents MOVIE_STORE on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00011433", PARENT_OWNER="", PARENT_TABLE="MOVIE"
+    CHILD_OWNER="", CHILD_TABLE="MOVIE_STORE"
+    P2C_VERB_PHRASE="rents", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="rents", FK_COLUMNS="movie number" */
+    IF EXISTS (
+      SELECT * FROM deleted,MOVIE_STORE
+      WHERE
+        /*  %JoinFKPK(MOVIE_STORE,deleted," = "," AND") */
+        MOVIE_STORE.movie number = deleted.movie number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete MOVIE because MOVIE_STORE exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_MOVIE ON MOVIE FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on MOVIE */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insmovie number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* MOVIE rents MOVIE_STORE on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00013187", PARENT_OWNER="", PARENT_TABLE="MOVIE"
+    CHILD_OWNER="", CHILD_TABLE="MOVIE_STORE"
+    P2C_VERB_PHRASE="rents", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="rents", FK_COLUMNS="movie number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(movie number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,MOVIE_STORE
+      WHERE
+        /*  %JoinFKPK(MOVIE_STORE,deleted," = "," AND") */
+        MOVIE_STORE.movie number = deleted.movie number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update MOVIE because MOVIE_STORE exists.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_MOVIE_STORE ON MOVIE_STORE FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on MOVIE_STORE */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* MOVIE rents MOVIE_STORE on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00014da0", PARENT_OWNER="", PARENT_TABLE="MOVIE"
+    CHILD_OWNER="", CHILD_TABLE="MOVIE_STORE"
+    P2C_VERB_PHRASE="rents", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="rents", FK_COLUMNS="movie number" */
+    IF EXISTS (SELECT * FROM deleted,MOVIE
+      WHERE
+        /* %JoinFKPK(deleted,MOVIE," = "," AND") */
+        deleted.movie number = MOVIE.movie number AND
+        NOT EXISTS (
+          SELECT * FROM MOVIE_STORE
+          WHERE
+            /* %JoinFKPK(MOVIE_STORE,MOVIE," = "," AND") */
+            MOVIE_STORE.movie number = MOVIE.movie number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last MOVIE_STORE because MOVIE exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_MOVIE_STORE ON MOVIE_STORE FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on MOVIE_STORE */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insmovie number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* MOVIE rents MOVIE_STORE on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="000177db", PARENT_OWNER="", PARENT_TABLE="MOVIE"
+    CHILD_OWNER="", CHILD_TABLE="MOVIE_STORE"
+    P2C_VERB_PHRASE="rents", C2P_VERB_PHRASE="", 
+    FK_CONSTRAINT="rents", FK_COLUMNS="movie number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(movie number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,MOVIE
+        WHERE
+          /* %JoinFKPK(inserted,MOVIE) */
+          inserted.movie number = MOVIE.movie number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update MOVIE_STORE because MOVIE does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+
+
+CREATE TRIGGER tD_PAYMENT ON PAYMENT FOR DELETE AS
+/* erwin Builtin Trigger */
+/* DELETE trigger on PAYMENT */
+BEGIN
+  DECLARE  @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+    /* erwin Builtin Trigger */
+    /* PAYMENT is made on MO RENT REC on parent delete no action */
+    /* ERWIN_RELATION:CHECKSUM="0004a3ff", PARENT_OWNER="", PARENT_TABLE="PAYMENT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="is made on", C2P_VERB_PHRASE="requires", 
+    FK_CONSTRAINT="is_made_on", FK_COLUMNS="payment transaction number" */
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.payment transaction number = deleted.payment transaction number
+    )
+    BEGIN
+      SELECT @errno  = 30001,
+             @errmsg = 'Cannot delete PAYMENT because MO RENT REC exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST CREDIT makes PAYMENT on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_2", FK_COLUMNS="CUST number" */
+    IF EXISTS (SELECT * FROM deleted,CUST CREDIT
+      WHERE
+        /* %JoinFKPK(deleted,CUST CREDIT," = "," AND") */
+        deleted.CUST number = CUST CREDIT.CUST number AND
+        NOT EXISTS (
+          SELECT * FROM PAYMENT
+          WHERE
+            /* %JoinFKPK(PAYMENT,CUST CREDIT," = "," AND") */
+            PAYMENT.CUST number = CUST CREDIT.CUST number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last PAYMENT because CUST CREDIT exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* CUST makes PAYMENT on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_1", FK_COLUMNS="customer no" */
+    IF EXISTS (SELECT * FROM deleted,CUST
+      WHERE
+        /* %JoinFKPK(deleted,CUST," = "," AND") */
+        deleted.customer no = CUST.CUST number AND
+        NOT EXISTS (
+          SELECT * FROM PAYMENT
+          WHERE
+            /* %JoinFKPK(PAYMENT,CUST," = "," AND") */
+            PAYMENT.customer no = CUST.CUST number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last PAYMENT because CUST exists.'
+      GOTO error
+    END
+
+    /* erwin Builtin Trigger */
+    /* EMP receives PAYMENT on child delete no action */
+    /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="receives", C2P_VERB_PHRASE="is received by", 
+    FK_CONSTRAINT="receives", FK_COLUMNS="EMP number" */
+    IF EXISTS (SELECT * FROM deleted,EMP
+      WHERE
+        /* %JoinFKPK(deleted,EMP," = "," AND") */
+        deleted.EMP number = EMP.EMP number AND
+        NOT EXISTS (
+          SELECT * FROM PAYMENT
+          WHERE
+            /* %JoinFKPK(PAYMENT,EMP," = "," AND") */
+            PAYMENT.EMP number = EMP.EMP number
+        )
+    )
+    BEGIN
+      SELECT @errno  = 30010,
+             @errmsg = 'Cannot delete last PAYMENT because EMP exists.'
+      GOTO error
+    END
+
+
+    /* erwin Builtin Trigger */
+    RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
+CREATE TRIGGER tU_PAYMENT ON PAYMENT FOR UPDATE AS
+/* erwin Builtin Trigger */
+/* UPDATE trigger on PAYMENT */
+BEGIN
+  DECLARE  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @inspayment transaction number integer,
+           @errno   int,
+           @severity int,
+           @state    int,
+           @errmsg  varchar(255)
+
+  SELECT @numrows = @@rowcount
+  /* erwin Builtin Trigger */
+  /* PAYMENT is made on MO RENT REC on parent update no action */
+  /* ERWIN_RELATION:CHECKSUM="00058931", PARENT_OWNER="", PARENT_TABLE="PAYMENT"
+    CHILD_OWNER="", CHILD_TABLE="MO RENT REC"
+    P2C_VERB_PHRASE="is made on", C2P_VERB_PHRASE="requires", 
+    FK_CONSTRAINT="is_made_on", FK_COLUMNS="payment transaction number" */
+  IF
+    /* %ParentPK(" OR",UPDATE) */
+    UPDATE(payment transaction number)
+  BEGIN
+    IF EXISTS (
+      SELECT * FROM deleted,MO RENT REC
+      WHERE
+        /*  %JoinFKPK(MO RENT REC,deleted," = "," AND") */
+        MO RENT REC.payment transaction number = deleted.payment transaction number
+    )
+    BEGIN
+      SELECT @errno  = 30005,
+             @errmsg = 'Cannot update PAYMENT because MO RENT REC exists.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST CREDIT makes PAYMENT on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST CREDIT"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_2", FK_COLUMNS="CUST number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(CUST number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,CUST CREDIT
+        WHERE
+          /* %JoinFKPK(inserted,CUST CREDIT) */
+          inserted.CUST number = CUST CREDIT.CUST number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.CUST number IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update PAYMENT because CUST CREDIT does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* CUST makes PAYMENT on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="CUST"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="makes", C2P_VERB_PHRASE="is made by", 
+    FK_CONSTRAINT="R_7_1", FK_COLUMNS="customer no" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(customer no)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,CUST
+        WHERE
+          /* %JoinFKPK(inserted,CUST) */
+          inserted.customer no = CUST.CUST number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.customer no IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update PAYMENT because CUST does not exist.'
+      GOTO error
+    END
+  END
+
+  /* erwin Builtin Trigger */
+  /* EMP receives PAYMENT on child update no action */
+  /* ERWIN_RELATION:CHECKSUM="00000000", PARENT_OWNER="", PARENT_TABLE="EMP"
+    CHILD_OWNER="", CHILD_TABLE="PAYMENT"
+    P2C_VERB_PHRASE="receives", C2P_VERB_PHRASE="is received by", 
+    FK_CONSTRAINT="receives", FK_COLUMNS="EMP number" */
+  IF
+    /* %ChildFK(" OR",UPDATE) */
+    UPDATE(EMP number)
+  BEGIN
+    SELECT @nullcnt = 0
+    SELECT @validcnt = count(*)
+      FROM inserted,EMP
+        WHERE
+          /* %JoinFKPK(inserted,EMP) */
+          inserted.EMP number = EMP.EMP number
+    /* %NotnullFK(inserted," IS NULL","select @nullcnt = count(*) from inserted where"," AND") */
+    select @nullcnt = count(*) from inserted where
+      inserted.EMP number IS NULL
+    IF @validcnt + @nullcnt != @numrows
+    BEGIN
+      SELECT @errno  = 30007,
+             @errmsg = 'Cannot update PAYMENT because EMP does not exist.'
+      GOTO error
+    END
+  END
+
+
+  /* erwin Builtin Trigger */
+  RETURN
+error:
+   RAISERROR (@errmsg, -- Message text.
+              @severity, -- Severity (0~25).
+              @state) -- State (0~255).
+    rollback transaction
+END
+
+go
+
+
